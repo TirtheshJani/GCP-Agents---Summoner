@@ -1,0 +1,46 @@
+# GCP Agents - Summoner Configuration
+# ====================================
+
+project:
+  name: "gcp-agents-summoner"
+  version: "0.1.0"
+
+# Google Cloud Platform settings
+gcp:
+  project_id: ${GCP_PROJECT_ID}
+  region: ${GCP_REGION:us-central1}
+  credentials_path: ${GOOGLE_APPLICATION_CREDENTIALS:}
+
+# Vertex AI configuration
+vertex_ai:
+  model_name: "gemini-1.5-flash"
+  temperature: 0.7
+  max_output_tokens: 2048
+  top_p: 0.95
+
+# Agent defaults
+agent:
+  max_retries: 3
+  timeout_seconds: 120
+  memory_backend: "firestore"  # firestore | in_memory
+  log_level: "INFO"
+
+# Firestore (agent memory)
+firestore:
+  collection: "agent_memory"
+
+# Cloud Storage
+storage:
+  bucket: ${GCP_STORAGE_BUCKET:}
+  output_prefix: "agent-outputs/"
+
+# Pub/Sub (agent communication)
+pubsub:
+  task_topic: "agent-tasks"
+  result_topic: "agent-results"
+
+# Logging & Monitoring
+logging:
+  structured: true
+  level: "INFO"
+  cloud_logging: true
