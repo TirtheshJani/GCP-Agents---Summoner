@@ -1,244 +1,241 @@
-# 🕹️ GCP Agents - Summoner
+# GCP Agents - Summoner
 
 [![Google Cloud](https://img.shields.io/badge/Google_Cloud-4285F4?style=for-the-badge&logo=google-cloud&logoColor=white)](https://cloud.google.com/)
-[![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
-[![AI Agents](https://img.shields.io/badge/AI-Agents-orange?style=for-the-badge)](https://github.com/TirtheshJani)
+[![Python](https://img.shields.io/badge/Python_3.9+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
+[![CI](https://img.shields.io/github/actions/workflow/status/TirtheshJani/GCP-Agents---Summoner/ci.yml?style=for-the-badge&label=CI)](https://github.com/TirtheshJani/GCP-Agents---Summoner/actions)
 
-> **Google Cloud Agentverse**  
-> Exploring the world of AI agents and autonomous systems on Google Cloud Platform.
-
----
-
-## 🎯 Project Overview
-
-This repository explores **AI agent development** and deployment on **Google Cloud Platform (GCP)**. It serves as a sandbox for experimenting with autonomous agents, multi-agent systems, and agent orchestration in cloud environments.
-
-### Vision
-Building intelligent, autonomous agents that can:
-- 🎯 Perform tasks with minimal human intervention
-- 🔄 Collaborate in multi-agent environments
-- ☁️ Leverage GCP's scalable infrastructure
-- 🔗 Integrate with Google Cloud AI services
+> An extensible AI agent framework built on Google Cloud Platform.  
+> Agents follow a **plan-execute-reflect** lifecycle and integrate natively with Vertex AI, Cloud Storage, Pub/Sub, and Firestore.
 
 ---
 
-## 🛠️ Tech Stack
+## Features
 
-| Category | Technologies |
-|----------|-------------|
-| **Cloud Platform** | Google Cloud Platform (GCP) |
-| **AI/ML** | Vertex AI, Dialogflow, Cloud Functions |
-| **Orchestration** | Cloud Run, GKE, Cloud Tasks |
-| **Language** | Python 3.9+ |
-| **APIs** | Google Cloud APIs, REST, gRPC |
+- **Plan-Execute-Reflect loop** -- every agent follows a structured lifecycle with built-in retry logic.
+- **Vertex AI integration** -- generate text with Gemini models out of the box.
+- **GCP-native tools** -- thin wrappers for Cloud Storage, Pub/Sub, and Firestore.
+- **In-memory & Firestore memory** -- agents persist state across tasks.
+- **CLI interface** -- run agents from the command line with [Click](https://click.palletsprojects.com/) + [Rich](https://rich.readthedocs.io/).
+- **Fully tested** -- unit tests with mocked GCP clients (no credentials required to run).
 
 ---
 
-## 🏗️ Architecture Concepts
+## Architecture
 
-### Agent Architecture
 ```
-┌─────────────────────────────────────────┐
-│           Agent Controller              │
-│  (Orchestration & Task Management)      │
-└─────────────────────────────────────────┘
-                    │
-        ┌───────────┼───────────┐
-        ▼           ▼           ▼
-┌──────────┐ ┌──────────┐ ┌──────────┐
-│  Agent 1 │ │  Agent 2 │ │  Agent N │
-│ (Task A) │ │ (Task B) │ │ (Task X) │
-└──────────┘ └──────────┘ └──────────┘
-        │           │           │
-        └───────────┼───────────┘
-                    ▼
-          ┌─────────────────┐
-          │  GCP Services   │
-          │ • Vertex AI     │
-          │ • Cloud Storage │
-          │ • Pub/Sub       │
-          │ • Firestore     │
-          └─────────────────┘
+                         +---------------------+
+                         |     CLI (main.py)   |
+                         +----------+----------+
+                                    |
+                         +----------v----------+
+                         |     BaseAgent       |
+                         |  plan -> execute    |
+                         |     -> reflect      |
+                         +----+----------+-----+
+                              |          |
+                 +------------+--+  +----+-------------+
+                 | ResearchAgent |  | DataProcessing   |
+                 | (Vertex AI)   |  | Agent (GCS ETL)  |
+                 +-------+------+  +-----+-------------+
+                         |                |
+              +----------v----------------v----------+
+              |          GCP Tool Layer              |
+              |  VertexAITool  CloudStorageTool      |
+              |  PubSubTool    FirestoreTool         |
+              +--------------------------------------+
 ```
 
-### Key Components
-1. **Agent Core** - Base agent functionality
-2. **Task Router** - Distributes tasks to appropriate agents
-3. **Memory Store** - Persistent agent state
-4. **Tool Integrations** - External service connections
-5. **Monitoring** - Agent performance tracking
+### Agent Lifecycle
+
+Every agent that extends `BaseAgent` follows three steps:
+
+| Step | Method | Purpose |
+|------|--------|---------|
+| 1 | `plan(task)` | Decide *what* to do |
+| 2 | `execute(plan)` | Carry out the plan (call APIs, models, tools) |
+| 3 | `reflect(task, result)` | Evaluate the result; retry if unsatisfied |
+
+The `run()` method orchestrates this loop with automatic retries via [tenacity](https://tenacity.readthedocs.io/).
 
 ---
 
-## 🚀 Getting Started
-
-### Prerequisites
-- Google Cloud account with billing enabled
-- gcloud CLI installed and configured
-- Python 3.9 or higher
-- Enable required APIs:
-  ```bash
-  gcloud services enable aiplatform.googleapis.com
-  gcloud services enable cloudfunctions.googleapis.com
-  gcloud services enable run.googleapis.com
-  ```
-
-### Installation
-```bash
-# Clone the repository
-git clone https://github.com/TirtheshJani/GCP-Agents---Summoner.git
-
-# Navigate to project
-cd GCP-Agents---Summoner
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Set up GCP credentials
-gcloud auth application-default login
-```
-
-### Configuration
-```bash
-# Set your GCP project
-export GCP_PROJECT_ID="your-project-id"
-export GCP_REGION="us-central1"
-
-# Configure agent settings
-export AGENT_CONFIG_PATH="config/agent_config.yaml"
-```
-
----
-
-## 📁 Repository Structure
+## Project Structure
 
 ```
 GCP-Agents---Summoner/
-├── agents/                      # Agent implementations
-│   ├── __init__.py
-│   ├── base_agent.py           # Base agent class
-│   └── specialized_agents/     # Specific agent types
-├── config/                      # Configuration files
-│   └── agent_config.yaml
-├── tools/                       # Agent tools/integrations
-│   ├── __init__.py
-│   └── gcp_tools.py
-├── tests/                       # Unit tests
-├── main.py                      # Entry point
-├── requirements.txt             # Python dependencies
-├── README.md                    # Project documentation
-└── LICENSE                      # MIT License
+|-- agents/
+|   |-- __init__.py
+|   |-- base_agent.py              # Abstract base agent + MemoryStore
+|   +-- specialized_agents/
+|       |-- __init__.py
+|       |-- research_agent.py      # Vertex AI research agent
+|       +-- data_processing_agent.py  # GCS ETL agent
+|-- config/
+|   |-- __init__.py                # Settings loader (YAML + env vars)
+|   +-- agent_config.yaml          # Default configuration
+|-- tools/
+|   |-- __init__.py
+|   +-- gcp_tools.py               # VertexAI, GCS, Pub/Sub, Firestore wrappers
+|-- tests/
+|   |-- test_base_agent.py         # Agent lifecycle tests
+|   |-- test_config.py             # Configuration tests
+|   +-- test_gcp_tools.py          # GCP tool tests (mocked)
+|-- examples/
+|   +-- quickstart.py              # Run a custom agent locally
+|-- main.py                        # CLI entry point
+|-- requirements.txt               # Production dependencies
+|-- requirements-dev.txt           # Dev/test dependencies
+|-- CONTRIBUTING.md
+|-- LICENSE
++-- README.md
 ```
 
 ---
 
-## 💡 Use Cases
+## Getting Started
 
-### Potential Applications
-1. **Customer Service Automation**
-   - Intelligent chatbots with memory
-   - Multi-turn conversation handling
-   - Integration with CRM systems
+### Prerequisites
 
-2. **Data Processing Pipelines**
-   - Autonomous data cleaning agents
-   - ETL orchestration
-   - Quality monitoring
+- Python 3.9+
+- A GCP project with billing enabled (for cloud features)
+- `gcloud` CLI installed and authenticated
 
-3. **Research Assistants**
-   - Literature review automation
-   - Data collection and synthesis
-   - Report generation
+### Installation
 
-4. **DevOps Automation**
-   - Infrastructure monitoring
-   - Alert response and remediation
-   - Deployment coordination
+```bash
+# Clone the repository
+git clone https://github.com/TirtheshJani/GCP-Agents---Summoner.git
+cd GCP-Agents---Summoner
 
----
+# Create a virtual environment
+python -m venv .venv
+source .venv/bin/activate
 
-## 🔧 Development Roadmap
+# Install dependencies
+pip install -r requirements.txt
+```
 
-### Phase 1: Foundation ⏳
-- [ ] Base agent framework
-- [ ] GCP service integrations
-- [ ] Simple task execution
+### Configuration
 
-### Phase 2: Enhancement 🔮
-- [ ] Multi-agent coordination
-- [ ] Memory and context management
-- [ ] Advanced tool use
+Copy the default config and set your GCP project:
 
-### Phase 3: Production 🚀
-- [ ] Monitoring and observability
-- [ ] Auto-scaling agents
-- [ ] Security hardening
+```bash
+export GCP_PROJECT_ID="your-project-id"
+export GCP_REGION="us-central1"            # optional, defaults to us-central1
+```
 
----
+All settings live in `config/agent_config.yaml` and support `${ENV_VAR:default}` substitution. See `config/__init__.py` for the full schema.
 
-## 📚 GCP Services Integration
+### Quick Test (no GCP credentials needed)
 
-| Service | Purpose |
-|---------|---------|
-| **Vertex AI** | Model training and inference |
-| **Cloud Functions** | Serverless agent execution |
-| **Cloud Run** | Containerized agent hosting |
-| **Firestore** | Agent state and memory |
-| **Pub/Sub** | Agent communication |
-| **Cloud Storage** | Data persistence |
-| **Cloud Logging** | Agent monitoring |
+```bash
+python examples/quickstart.py
+```
+
+This runs a local `SummaryAgent` that demonstrates the plan-execute-reflect lifecycle without calling any cloud services.
 
 ---
 
-## 🔒 Security Considerations
+## Usage
 
-- **IAM Roles:** Minimal required permissions
-- **API Keys:** Secure storage in Secret Manager
-- **Data Privacy:** PII handling compliance
-- **Network:** VPC configuration for private resources
+### CLI Commands
 
----
+```bash
+# Research a topic using Vertex AI
+python main.py research "What are the latest trends in LLM agents?"
 
-## 📊 Monitoring & Observability
+# Process files in a GCS bucket
+python main.py process --prefix raw-data/
+
+# View current configuration
+python main.py config
+```
+
+### Building a Custom Agent
 
 ```python
-# Example: Agent activity logging
-from google.cloud import logging
+from agents.base_agent import BaseAgent
 
-client = logging.Client()
-logger = client.logger('agent-activity')
+class GreeterAgent(BaseAgent):
+    @property
+    def name(self) -> str:
+        return "greeter"
 
-logger.log_text(f"Agent {agent_id} executed task {task_id}")
+    def plan(self, task: str) -> str:
+        return f"Greet the user about: {task}"
+
+    def execute(self, plan: str) -> str:
+        return f"Hello! {plan}"
+
+agent = GreeterAgent()
+result = agent.run("welcome message")
+print(result.output)  # "Hello! Greet the user about: welcome message"
 ```
 
 ---
 
-## 🤝 Contributing
+## Tech Stack
 
-This is an experimental project. Contributions welcome:
-- New agent types
-- Additional GCP integrations
-- Documentation improvements
-- Use case examples
+| Category | Technology | Purpose |
+|----------|-----------|---------|
+| **Cloud** | Google Cloud Platform | Infrastructure & AI services |
+| **AI/ML** | Vertex AI (Gemini) | Text generation for agents |
+| **Storage** | Cloud Storage | File-based data processing |
+| **Messaging** | Pub/Sub | Agent-to-agent communication |
+| **Database** | Firestore | Agent memory & state persistence |
+| **Language** | Python 3.9+ | Core framework |
+| **CLI** | Click + Rich | Command-line interface |
+| **Config** | Pydantic + YAML | Type-safe configuration |
+| **Testing** | pytest | Unit & integration tests |
+| **CI** | GitHub Actions | Lint + test on push/PR |
 
 ---
 
-## 📧 Contact
+## Development
 
-For questions or collaboration:
+```bash
+# Install dev dependencies
+pip install -r requirements-dev.txt
+
+# Run tests
+pytest tests/ -v
+
+# Run tests with coverage
+pytest tests/ --cov=agents --cov=tools --cov=config -v
+
+# Lint & format
+ruff check .
+ruff format .
+```
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for more details.
+
+---
+
+## Roadmap
+
+- [x] Base agent framework with plan-execute-reflect lifecycle
+- [x] Vertex AI, Cloud Storage, Pub/Sub, Firestore tool wrappers
+- [x] Research agent and data processing agent
+- [x] CLI interface
+- [x] Unit tests with mocked GCP clients
+- [x] GitHub Actions CI
+- [ ] Multi-agent orchestration and task routing
+- [ ] Firestore-backed persistent memory store
+- [ ] Cloud Run deployment with Dockerfile
+- [ ] Streaming agent responses
+- [ ] Agent observability dashboard
+
+---
+
+## License
+
+This project is licensed under the MIT License -- see the [LICENSE](LICENSE) file for details.
+
+---
+
+## Contact
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/tirthesh-jani)
 [![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/TirtheshJani)
-
----
-
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-<p align="center">
-  <i>Summoning the future of AI agents on GCP ☁️🤖</i>
-</p>
