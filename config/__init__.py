@@ -11,7 +11,6 @@ import yaml
 from pydantic import BaseModel, Field
 from pydantic_settings import BaseSettings
 
-
 _ENV_VAR_PATTERN = re.compile(
     r"\$\{(?P<name>[A-Za-z_][A-Za-z0-9_]*)(?::(?P<default>[^}]*))?\}"
 )
@@ -20,10 +19,12 @@ _ENV_VAR_PATTERN = re.compile(
 def _resolve_env_vars(value: Any) -> Any:
     """Recursively resolve ${VAR:default} placeholders in config values."""
     if isinstance(value, str):
+
         def _replacer(match: re.Match) -> str:
             name = match.group("name")
             default = match.group("default") or ""
             return os.environ.get(name, default)
+
         return _ENV_VAR_PATTERN.sub(_replacer, value)
     if isinstance(value, dict):
         return {k: _resolve_env_vars(v) for k, v in value.items()}

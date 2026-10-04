@@ -9,7 +9,8 @@ This agent:
 from __future__ import annotations
 
 import json
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 import structlog
 
@@ -18,6 +19,7 @@ from config import Settings
 from tools.gcp_tools import CloudStorageTool
 
 logger = structlog.get_logger(__name__)
+
 
 def _default_transform(data: bytes) -> bytes:
     """Default transform: return data unchanged."""
@@ -77,6 +79,4 @@ class DataProcessingAgent(BaseAgent):
 
     def reflect(self, task: str, result: Any) -> bool:
         """Succeed if at least one file was processed (or no files existed)."""
-        if not isinstance(result, dict):
-            return False
-        return True
+        return isinstance(result, dict)

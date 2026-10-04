@@ -22,8 +22,8 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
 
-from agents.specialized_agents.research_agent import ResearchAgent
 from agents.specialized_agents.data_processing_agent import DataProcessingAgent
+from agents.specialized_agents.research_agent import ResearchAgent
 from config import load_config
 
 console = Console()
@@ -77,11 +77,15 @@ def process(ctx: click.Context, prefix: str) -> None:
     settings = ctx.obj["settings"]
     agent = DataProcessingAgent(settings, source_prefix=prefix)
 
-    console.print(Panel(f"[bold]Source prefix:[/bold] {prefix or '(root)'}", title="Summoner"))
+    console.print(
+        Panel(f"[bold]Source prefix:[/bold] {prefix or '(root)'}", title="Summoner")
+    )
     result = agent.run(f"Process files under {prefix or 'bucket root'}")
 
     if result.success:
-        console.print(f"[bold green]Processed {result.output['count']} files[/bold green]")
+        console.print(
+            f"[bold green]Processed {result.output['count']} files[/bold green]"
+        )
         for f in result.output["processed_files"]:
             console.print(f"  -> {f}")
     else:

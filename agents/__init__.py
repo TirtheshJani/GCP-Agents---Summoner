@@ -2,4 +2,4 @@
 
 from agents.base_agent import AgentState, BaseAgent, TaskResult
 
-__all__ = ["BaseAgent", "AgentState", "TaskResult"]
+__all__ = ["AgentState", "BaseAgent", "TaskResult"]

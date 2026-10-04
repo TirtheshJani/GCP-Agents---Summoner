@@ -8,10 +8,10 @@ import pytest
 
 from agents.base_agent import AgentState, BaseAgent, MemoryStore, TaskResult
 
-
 # ---------------------------------------------------------------------------
 # Concrete test agent
 # ---------------------------------------------------------------------------
+
 
 class EchoAgent(BaseAgent):
     """Trivial agent that echoes its input (for testing)."""
@@ -62,6 +62,7 @@ class RejectingAgent(BaseAgent):
 # Tests - BaseAgent lifecycle
 # ---------------------------------------------------------------------------
 
+
 class TestBaseAgent:
     def test_successful_run(self):
         agent = EchoAgent()
@@ -108,6 +109,7 @@ class TestBaseAgent:
 # Tests - TaskResult
 # ---------------------------------------------------------------------------
 
+
 class TestTaskResult:
     def test_success_summary(self):
         r = TaskResult(
@@ -136,6 +138,7 @@ class TestTaskResult:
 # ---------------------------------------------------------------------------
 # Tests - MemoryStore
 # ---------------------------------------------------------------------------
+
 
 class TestMemoryStore:
     def test_set_get(self):

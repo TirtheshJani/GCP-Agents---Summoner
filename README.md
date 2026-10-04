@@ -157,6 +157,7 @@ python main.py config
 ```python
 from agents.base_agent import BaseAgent
 
+
 class GreeterAgent(BaseAgent):
     @property
     def name(self) -> str:
@@ -167,6 +168,7 @@ class GreeterAgent(BaseAgent):
 
     def execute(self, plan: str) -> str:
         return f"Hello! {plan}"
+
 
 agent = GreeterAgent()
 result = agent.run("welcome message")
