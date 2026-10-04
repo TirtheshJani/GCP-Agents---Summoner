@@ -32,6 +32,7 @@ logger = structlog.get_logger(__name__)
 # Data models
 # ---------------------------------------------------------------------------
 
+
 class AgentState(str, Enum):
     """Lifecycle states of an agent."""
 
@@ -64,6 +65,7 @@ class TaskResult:
 # Memory store
 # ---------------------------------------------------------------------------
 
+
 class MemoryStore:
     """Simple in-memory key/value store for agent state.
 
@@ -93,6 +95,7 @@ class MemoryStore:
 # ---------------------------------------------------------------------------
 # Base agent
 # ---------------------------------------------------------------------------
+
 
 class BaseAgent(ABC):
     """Abstract base class for all agents.

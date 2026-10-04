@@ -19,6 +19,7 @@ logger = structlog.get_logger(__name__)
 # Vertex AI
 # ---------------------------------------------------------------------------
 
+
 class VertexAITool:
     """Generate text using a Vertex AI generative model."""
 
@@ -59,6 +60,7 @@ class VertexAITool:
 # Cloud Storage
 # ---------------------------------------------------------------------------
 
+
 class CloudStorageTool:
     """Read, write, and list objects in Google Cloud Storage."""
 
@@ -69,6 +71,7 @@ class CloudStorageTool:
     def _get_client(self) -> Any:
         if self._client is None:
             from google.cloud import storage
+
             self._client = storage.Client(project=self._settings.gcp.project_id)
         return self._client
 
@@ -101,6 +104,7 @@ class CloudStorageTool:
 # Pub/Sub
 # ---------------------------------------------------------------------------
 
+
 class PubSubTool:
     """Publish and subscribe to Google Cloud Pub/Sub topics."""
 
@@ -111,6 +115,7 @@ class PubSubTool:
     def _get_publisher(self) -> Any:
         if self._publisher is None:
             from google.cloud import pubsub_v1
+
             self._publisher = pubsub_v1.PublisherClient()
         return self._publisher
 
@@ -128,6 +133,7 @@ class PubSubTool:
 # Firestore
 # ---------------------------------------------------------------------------
 
+
 class FirestoreTool:
     """Persist and retrieve agent memory in Cloud Firestore."""
 
@@ -138,6 +144,7 @@ class FirestoreTool:
     def _get_client(self) -> Any:
         if self._client is None:
             from google.cloud import firestore
+
             self._client = firestore.Client(project=self._settings.gcp.project_id)
         return self._client
 

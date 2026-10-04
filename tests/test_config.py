@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import textwrap
 
-from config import Settings, load_config, _resolve_env_vars
+from config import Settings, _resolve_env_vars, load_config
 
 
 class TestResolveEnvVars:

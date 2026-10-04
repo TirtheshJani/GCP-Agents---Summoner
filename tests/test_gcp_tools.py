@@ -28,6 +28,7 @@ def settings():
 # VertexAITool
 # ---------------------------------------------------------------------------
 
+
 class TestVertexAITool:
     @patch("tools.gcp_tools.VertexAITool._get_model")
     def test_generate(self, mock_get_model, settings):
@@ -45,6 +46,7 @@ class TestVertexAITool:
 # ---------------------------------------------------------------------------
 # CloudStorageTool
 # ---------------------------------------------------------------------------
+
 
 class TestCloudStorageTool:
     @patch("tools.gcp_tools.CloudStorageTool._get_client")
@@ -90,12 +92,15 @@ class TestCloudStorageTool:
 # PubSubTool
 # ---------------------------------------------------------------------------
 
+
 class TestPubSubTool:
     @patch("tools.gcp_tools.PubSubTool._get_publisher")
     def test_publish(self, mock_get_publisher, settings):
         mock_publisher = MagicMock()
         mock_publisher.topic_path.return_value = "projects/test-project/topics/my-topic"
-        mock_publisher.publish.return_value = MagicMock(result=MagicMock(return_value="msg-123"))
+        mock_publisher.publish.return_value = MagicMock(
+            result=MagicMock(return_value="msg-123")
+        )
         mock_get_publisher.return_value = mock_publisher
 
         tool = PubSubTool(settings)
@@ -107,6 +112,7 @@ class TestPubSubTool:
 # ---------------------------------------------------------------------------
 # FirestoreTool
 # ---------------------------------------------------------------------------
+
 
 class TestFirestoreTool:
     @patch("tools.gcp_tools.FirestoreTool._get_client")
@@ -126,7 +132,9 @@ class TestFirestoreTool:
         mock_doc = MagicMock()
         mock_doc.exists = True
         mock_doc.to_dict.return_value = {"key": "value"}
-        mock_client.collection.return_value.document.return_value.get.return_value = mock_doc
+        mock_client.collection.return_value.document.return_value.get.return_value = (
+            mock_doc
+        )
         mock_get_client.return_value = mock_client
 
         tool = FirestoreTool(settings)
@@ -139,7 +147,9 @@ class TestFirestoreTool:
         mock_client = MagicMock()
         mock_doc = MagicMock()
         mock_doc.exists = False
-        mock_client.collection.return_value.document.return_value.get.return_value = mock_doc
+        mock_client.collection.return_value.document.return_value.get.return_value = (
+            mock_doc
+        )
         mock_get_client.return_value = mock_client
 
         tool = FirestoreTool(settings)

@@ -17,7 +17,7 @@ from typing import Any
 # Ensure the project root is importable
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from agents.base_agent import BaseAgent  # noqa: E402
+from agents.base_agent import BaseAgent
 
 
 class SummaryAgent(BaseAgent):
